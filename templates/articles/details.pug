@@ -1,0 +1,29 @@
+//- Parameters
+//- article, user
+
+extends ../layout.pug
+
+block title
+    | #{title}
+
+block page_title
+    | #{title}
+
+block buttons
+    a.btn.btn-secondary.mr-2(href='/articles') Go to Board
+    if (user && article.author === user.id)
+        a.btn.btn-warning.mr-2(href=`/article/edit/${article.id}`) Edit Article
+        a.btn.btn-danger.mr-2(href=`/article/delete/${article.id}`) Delete Article
+
+block content
+    .card#content
+        .card-header
+            .card-text Author: #{article.displayName}
+            .card-text 
+                | Created At: 
+                | #{article.createdAt.toLocaleString('en-US',{timeZone: 'Asia/Seoul'})}
+            .card-text 
+                | Last Updated At: 
+                | #{article.lastUpdated.toLocaleString('en-US',{timeZone: 'Asia/Seoul'})}
+        .card-body
+            .card-text.text-break !{article.content}
