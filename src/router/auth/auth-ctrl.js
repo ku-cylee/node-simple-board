@@ -5,24 +5,26 @@ const { runQuery } = require('../../lib/database');
 
 const pbkdf2 = util.promisify(crypto.pbkdf2);
 const randomBytes = util.promisify(crypto.randomBytes);
-const KEY_LEN = 64;
-
-const comparePassword = async (password, storedPassword) => {
-    const [algo, encodedSalt, iterStr, keylenStr, encodedDigest] = storedPassword.split(':');
-    const iter = parseInt(iterStr);
-    const keylen = parseInt(keylenStr);
-    const salt = Buffer.from(encodedSalt, 'base64');
-    const digest = Buffer.from(encodedDigest, 'base64');
-    const hashed = await pbkdf2(password, salt, iter, keylen, algo);
-    return Buffer.compare(hashed, digest) === 0;
-};
 
 const generatePassword = async password => {
-    const ITER = 100000;
     const ALGO = 'sha512';
-    const salt = await randomBytes(16);
-    const digest = await pbkdf2(password, salt, ITER, KEY_LEN, ALGO);
-    return `${ALGO}:${salt.toString('base64')}:${ITER}:${KEY_LEN}:${digest.toString('base64')}`;
+    const salt = await randomBytes(32);
+    const iter = parseInt(Math.random() * 20000) + 100000;
+    const KEY_LEN = 64;
+
+    const digest = await pbkdf2(password, salt, iter, KEY_LEN, ALGO);
+    return `${ALGO}:${salt.toString('base64')}:${iter}:${KEY_LEN}:${digest.toString('base64')}`;
+};
+
+const verifyPassword = async (password, hashedPassword) => {
+    const [algo, encodedSalt, iterStr, keyLenStr, encodedDigest] = hashedPassword.split(':');
+    const salt = Buffer.from(encodedSalt, 'base64');
+    const iter = parseInt(iterStr);
+    const keyLen = parseInt(keyLenStr);
+    const storedDigest = Buffer.from(encodedDigest, 'base64');
+
+    const digest = await pbkdf2(password, salt, iter, keyLen, algo);
+    return Buffer.compare(digest, storedDigest) === 0;
 };
 
 // GET /auth/sign_in
@@ -47,8 +49,8 @@ const signIn = async (req, res, next) => {
         if (!result.length) throw new Error('UNAUTHORIZED');
 
         const user = result[0];
-        const isEqualPassword = await comparePassword(password, user.password);
-        if (!isEqualPassword) throw new Error('UNAUTHORIZED');
+        const isVerified = await verifyPassword(password, user.password);
+        if (!isVerified) throw new Error('UNAUTHORIZED');
         
         req.session.user = {
             id: user.id,
