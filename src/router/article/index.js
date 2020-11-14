@@ -1,7 +1,7 @@
 const { Router } = require('express');
 
 const { authRequired } = require('../auth/middleware');
-const articleCtrl = require('./article-ctrl');
+const articleCtrl = require('./ctrl');
 
 const router = Router();
 
