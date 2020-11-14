@@ -30,8 +30,9 @@ const verifyPassword = async (password, hashedPassword) => {
 // GET /auth/sign_in
 const signInForm = async (req, res, next) => {
     try {
-        if (req.session.user) res.redirect('/');
-        else res.render('auth/sign-in.pug');
+        const { user } = req.session;
+        if (user) res.redirect('/');
+        else res.render('auth/sign-in.pug', { user });
     } catch (err) {
         next(err);
     }
@@ -68,7 +69,8 @@ const signIn = async (req, res, next) => {
 // GET /auth/sign_up
 const signUpForm = async (req, res, next) => {
     try {
-        res.render('auth/sign-up.pug');
+        const { user } = req.session;
+        res.render('auth/sign-up.pug', { user });
     } catch {
         next(err);
     }

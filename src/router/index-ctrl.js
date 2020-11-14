@@ -14,6 +14,7 @@ const indexPage = async (req, res, next) => {
 const listArticles = async (req, res, next) => {
     try {
         const { page } = req.params;
+        const { user } = req.session;
         const pageNum = parseInt(page);
         if (pageNum <= 0) throw new Error('BAD_REQUEST');
 
@@ -32,6 +33,7 @@ const listArticles = async (req, res, next) => {
         const pageCount = Math.ceil(articleCount / ARTICLES_PER_PAGE);
 
         res.render('articles/index.pug', {
+            user,
             articles,
             page: pageNum, 
             hasPrev: pageNum > 1, 

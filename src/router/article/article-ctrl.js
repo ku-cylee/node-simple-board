@@ -13,7 +13,7 @@ const readArticle = async (req, res, next) => {
 		if (!result.length) throw new Error('NOT_EXIST');
 
 		const article = result[0];
-        res.render('articles/details.pug', { article, user });
+        res.render('articles/details.pug', { user, article });
     } catch (err) {
         next(err);
     }
@@ -60,7 +60,7 @@ const editArticleForm = async (req, res, next) => {
 		if (!articles.length) throw new Error('NOT_EXIST');
 		const article = articles[0];
 
-		res.render('articles/compose.pug', { article, user });
+		res.render('articles/compose.pug', { user, article });
 	} catch (err) {
 		next(err);
 	}
@@ -77,12 +77,12 @@ const editArticle = async (req, res, next) => {
 
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 
-		const selectSql = 'SELECT id FROM articles WHERE id = ? AND author = ?';
-		const articles = await runQuery(selectSql, [articleId, user.id]);
+		let sql = 'SELECT id FROM articles WHERE id = ? AND author = ?';
+		const articles = await runQuery(sql, [articleId, user.id]);
 		if (!articles.length) throw new Error('NOT_EXIST');
 		const article = articles[0];
 
-		const sql = 'UPDATE articles SET title = ?, content = ? WHERE id = ?';
+		sql = 'UPDATE articles SET title = ?, content = ? WHERE id = ?';
 		await runQuery(sql, [trimmedTitle, trimmedContent, article.id]);
 		res.redirect(`/article/${article.id}`);
 	} catch (err) {
