@@ -19,7 +19,7 @@ const errorHandler = (err, req, res, next) => {
     const { statusCode } = errors[errorName];
     
     if (statusCode === 500) console.error(err);
-    res.status(statusCode);
+    res.sendStatus(statusCode);
 };
 
 module.exports = { errorHandler };

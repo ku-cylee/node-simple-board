@@ -2,9 +2,9 @@
 
 CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `username` VARCHAR(20) NOT NULL UNIQUE,
-    `displayName` VARCHAR(30) NOT NULL UNIQUE,
-    `password` VARCHAR(512) NOT NULL,
+    `username` VARCHAR(16) NOT NULL UNIQUE,
+    `displayName` VARCHAR(32) NOT NULL UNIQUE,
+    `password` VARCHAR(160) NOT NULL,
     `dateJoined` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
     `isActive` TINYINT(1) NOT NULL DEFAULT 1,
     `isStaff` TINYINT(1) NOT NULL DEFAULT 0,
@@ -13,7 +13,7 @@ CREATE TABLE `users` (
 
 CREATE TABLE `articles` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(40) NOT NULL,
+    `title` VARCHAR(32) NOT NULL,
     `content` TEXT NOT NULL,
     `author` INT NOT NULL,
     `createdAt` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
