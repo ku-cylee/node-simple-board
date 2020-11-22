@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const indexCtrl = require('./index-ctrl');
+const indexCtrl = require('./ctrl');
 const article = require('./article');
 const auth = require('./auth');
 
