@@ -54,7 +54,8 @@ const editArticleForm = async (req, res, next) => {
 		const { articleId } = req.params;
 		const articleIdNum = parseInt(articleId);
 
-		const sql = 'SELECT * FROM articles WHERE id = ? AND isActive = 1 AND isDeleted = 0';
+		const sql = 'SELECT * FROM articles ' +
+					'WHERE id = ? AND author = ? AND isActive = 1 AND isDeleted = 0';
 		const articles = await runQuery(sql, [articleIdNum]);
 
 		if (!articles.length) throw new Error('NOT_EXIST');
@@ -77,7 +78,8 @@ const editArticle = async (req, res, next) => {
 
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 
-		let sql = 'SELECT id FROM articles WHERE id = ? AND author = ?';
+		let sql = 'SELECT id FROM articles ' + 
+				  'WHERE id = ? AND author = ? AND isActive = 1 AND isDeleted = 0';
 		const articles = await runQuery(sql, [articleId, user.id]);
 		if (!articles.length) throw new Error('NOT_EXIST');
 		const article = articles[0];
