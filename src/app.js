@@ -1,12 +1,13 @@
 const express = require('express');
 const logger = require('morgan');
 const session = require('express-session');
-const router = require('./router');
-const { errorHandler } = require('./lib/error-handler');
+
+const controller = require('./controllers');
+const errorHandler = require('./lib/error-handler');
 
 const app = express();
 
-app.set('views', `${__dirname}/../templates`);
+app.set('views', `${__dirname}/../views`);
 app.set('view engine', 'pug');
 
 app.use('/', express.static(`${__dirname}/../public`));
@@ -20,8 +21,8 @@ app.use(session({
 	saveUninitialized: true,
 }));
 
-app.use('/', router);
+app.use('/', controller);
 
 app.use(errorHandler);
 
-module.exports = app;
+module.exports = controller;

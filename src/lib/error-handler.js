@@ -22,4 +22,4 @@ const errorHandler = (err, req, res, next) => {
     res.sendStatus(statusCode);
 };
 
-module.exports = { errorHandler };
+module.exports = errorHandler;
