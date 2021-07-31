@@ -1,18 +1,12 @@
 const { runQuery } = require('../../lib/database');
+const { articleDAO } = require('../../DAOs');
 
 // GET /article/:articleId(\\d+)
 const readArticle = async (req, res, next) => {
     try {
 		const { user } = req.session;
 		const { articleId } = req.params;
-		const articleIdNum = parseInt(articleId);
-        const sql = 'SELECT articles.*, users.displayName FROM articles ' + 
-                    'INNER JOIN users ON articles.author = users.id ' +
-					'WHERE articles.id = ? AND articles.isActive = 1 AND articles.isDeleted = 0';
-		const result = await runQuery(sql, [articleIdNum]);
-		if (!result.length) throw new Error('NOT_EXIST');
-
-		const article = result[0];
+		const article = await articleDAO.getById(parseInt(articleId, 10));
         res.render('articles/details.pug', { user, article });
     } catch (err) {
         next(err);
@@ -36,12 +30,10 @@ const writeArticle = async (req, res, next) => {
 		const { title, content } = req.body;
 		const trimmedTitle = title.trim();
 		const trimmedContent = content.trim();
-
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 		
-		const sql = 'INSERT INTO articles (title, content, author) VALUES (?, ?, ?)'
-		const article = await runQuery(sql, [trimmedTitle, trimmedContent, user.id]);
-		res.redirect(`/article/${article.insertId}`);
+		const newArticleId = await articleDAO.create(trimmedTitle, trimmedContent, user);
+		res.redirect(`/article/${newArticleId}`);
 	} catch (err) {
 		next(err);
 	}
@@ -52,14 +44,8 @@ const editArticleForm = async (req, res, next) => {
 	try {
 		const { user } = req.session;
 		const { articleId } = req.params;
-		const articleIdNum = parseInt(articleId);
-
-		const sql = 'SELECT * FROM articles ' +
-					'WHERE id = ? AND author = ? AND isActive = 1 AND isDeleted = 0';
-		const articles = await runQuery(sql, [articleIdNum]);
-
-		if (!articles.length) throw new Error('NOT_EXIST');
-		const article = articles[0];
+		const articleIdNum = parseInt(articleId, 10);
+		const article = await articleDAO.getByIdAndAuthor(articleIdNum, user);
 
 		res.render('articles/editor.pug', { user, article });
 	} catch (err) {
@@ -75,17 +61,10 @@ const editArticle = async (req, res, next) => {
 		const { title, content } = req.body;
 		const trimmedTitle = title.trim();
 		const trimmedContent = content.trim();
-
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 
-		let sql = 'SELECT id FROM articles ' + 
-				  'WHERE id = ? AND author = ? AND isActive = 1 AND isDeleted = 0';
-		const articles = await runQuery(sql, [articleId, user.id]);
-		if (!articles.length) throw new Error('NOT_EXIST');
-		const article = articles[0];
-
-		sql = 'UPDATE articles SET title = ?, content = ? WHERE id = ?';
-		await runQuery(sql, [trimmedTitle, trimmedContent, article.id]);
+		const article = await articleDAO.getByIdAndAuthor(articleId, user.id);
+		await articleDAO.update(trimmedTitle, trimmedContent, article.id);
 		res.redirect(`/article/${article.id}`);
 	} catch (err) {
 		next(err);
@@ -97,14 +76,9 @@ const deleteArticle = async (req, res, next) => {
 	try {
 		const { user } = req.session;
 		const { articleId } = req.params;
-		let sql = 'SELECT id FROM articles ' + 
-				  'WHERE id = ? AND author = ? AND isActive = 1 AND isDeleted = 0';
-		const articles = await runQuery(sql, [articleId, user.id]);
 
-		if (!articles.length) throw new Error('NOT_EXIST');
-	
-		sql = 'UPDATE articles SET isDeleted = 1 WHERE id = ?';
-		await runQuery(sql, [articles[0].id]);
+		await articleDAO.getByIdAndAuthor(articleId, user);
+		await articleDAO.remove(articleId);
 		
 		res.redirect('/articles/page/1');
 	} catch (err) {

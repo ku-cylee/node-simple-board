@@ -27,4 +27,4 @@ const runQuery = async (query, data) => {
 	}
 };
 
-module.exports = { runQuery };
+module.exports = runQuery;

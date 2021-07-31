@@ -5,7 +5,7 @@ const errors = {
     UNAUTHORIZED: {
         statusCode: 401,
     },
-    NOT_EXIST: {
+    NOT_FOUND: {
         statusCode: 404,
     },
     INTERNAL_SERVER_ERROR: {

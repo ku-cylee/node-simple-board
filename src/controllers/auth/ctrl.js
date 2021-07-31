@@ -1,5 +1,5 @@
 const { generatePassword, verifyPassword } = require('../../lib/authentication');
-const { runQuery } = require('../../lib/database');
+const { userDAO } = require('../../DAOs');
 
 // GET /auth/sign_in
 const signInForm = async (req, res, next) => {
@@ -16,14 +16,9 @@ const signInForm = async (req, res, next) => {
 const signIn = async (req, res, next) => {
     try {
         const { username, password } = req.body;
-
         if (!username || !password) throw new Error('BAD_REQUEST');
 
-        const sql = 'SELECT * FROM users WHERE username = ?';
-        const result = await runQuery(sql, [username]);
-        if (!result.length) throw new Error('UNAUTHORIZED');
-
-        const user = result[0];
+        const user = await userDAO.getByUsername(username);
         const isVerified = await verifyPassword(password, user.password);
         if (!isVerified) throw new Error('UNAUTHORIZED');
         
@@ -54,12 +49,10 @@ const signUpForm = async (req, res, next) => {
 const signUp = async (req, res, next) => {
     try {
         const { displayName, username, password } = req.body;
-
         if (!displayName || !username || !password) throw new Error('BAD_REQUEST');
 
         const hashedPassword = await generatePassword(password);
-        const sql = 'INSERT INTO users (username, password, displayName) VALUES (?, ?, ?)';
-        await runQuery(sql, [username, hashedPassword, displayName]);
+        await userDAO.create(username, password, displayName);
         res.redirect('/auth/sign_in');
     } catch (err) {
         next(err);
