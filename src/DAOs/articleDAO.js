@@ -1,12 +1,28 @@
 const runQuery = require('../lib/database');
 
+const formatDate = date => {
+    const yr = date.getFullYear();
+    const mon = date.getMonth() + 1;
+    const dt = date.getDate();
+    const hrs = date.getHours();
+    const mins = date.getMinutes();
+    const secs = date.getSeconds();
+    return `${yr}. ${mon}. ${dt} ${hrs}:${mins}:${secs}`;
+};
+
+const replaceDate = article => {
+    article.createdAt = formatDate(article.createdAt);
+    article.lastUpdated = formatDate(article.lastUpdated);
+    return article;
+};
+
 const getList = async (start, count) => {
     const sql = 'SELECT articles.*, users.displayName FROM articles ' +
                 'INNER JOIN users ON articles.author = users.id ' +
                 'WHERE articles.isActive = 1 AND articles.isDeleted = 0 ' + 
                 'ORDER BY articles.id DESC LIMIT ?, ?';
     const articles = await runQuery(sql, [start, count]);
-    return articles;
+    return articles.map(replaceDate);
 };
 
 const getTotalCount = async () => {
@@ -22,7 +38,7 @@ const getById = async id => {
                 'WHERE articles.id=? AND articles.isActive=1 AND articles.isDeleted=0';
     const articles = await runQuery(sql, [id]);
     if (!articles.length) throw new Error('NOT_FOUND');
-    return articles[0];
+    return replaceDate(articles[0]);
 };
 
 const getByIdAndAuthor = async (id, author) => {
@@ -30,7 +46,7 @@ const getByIdAndAuthor = async (id, author) => {
                 'WHERE id=? AND author=? AND isActive=1 AND isDeleted=0';
     const articles = await runQuery(sql, [id, author.id]);
     if (!articles.length) throw new Error('NOT_FOUND');
-    return articles[0];
+    return replaceDate(articles[0]);
 };
 
 const create = async (title, content, author) => {

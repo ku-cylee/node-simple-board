@@ -23,8 +23,7 @@ block content
                         | /
                         | Written by #{article.displayName}
                     .card-text
-                        | Last Updated at
-                        | #{article.lastUpdated.toLocaleString('en-US',{timeZone: 'Asia/Seoul'})}
+                        | Last Updated at #{article.lastUpdated}
             else
                 .list-group-item
                     .card-text No articles
