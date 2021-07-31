@@ -23,7 +23,7 @@ const readArticle = async (req, res, next) => {
 const writeArticleForm = async (req, res, next) => {
 	try {
 		const { user } = req.session;
-		res.render('articles/compose.pug', { user });
+		res.render('articles/editor.pug', { user });
 	} catch (err) {
 		next(err);
 	}
@@ -61,7 +61,7 @@ const editArticleForm = async (req, res, next) => {
 		if (!articles.length) throw new Error('NOT_EXIST');
 		const article = articles[0];
 
-		res.render('articles/compose.pug', { user, article });
+		res.render('articles/editor.pug', { user, article });
 	} catch (err) {
 		next(err);
 	}
