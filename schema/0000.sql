@@ -4,7 +4,7 @@ CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(16) NOT NULL UNIQUE,
     `displayName` VARCHAR(32) NOT NULL UNIQUE,
-    `password` VARCHAR(160) NOT NULL,
+    `password` VARCHAR(256) NOT NULL,
     `dateJoined` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
     `isActive` TINYINT(1) NOT NULL DEFAULT 1,
     `isStaff` TINYINT(1) NOT NULL DEFAULT 0,

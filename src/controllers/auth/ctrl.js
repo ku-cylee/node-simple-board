@@ -1,5 +1,5 @@
-const { generatePassword, verifyPassword } = require('../../lib/authentication');
 const { userDAO } = require('../../DAOs');
+const { generatePassword, verifyPassword } = require('../../lib/authentication');
 
 // GET /auth/sign_in
 const signInForm = async (req, res, next) => {
@@ -52,7 +52,7 @@ const signUp = async (req, res, next) => {
         if (!displayName || !username || !password) throw new Error('BAD_REQUEST');
 
         const hashedPassword = await generatePassword(password);
-        await userDAO.create(username, password, displayName);
+        await userDAO.create(username, hashedPassword, displayName);
         res.redirect('/auth/sign_in');
     } catch (err) {
         next(err);

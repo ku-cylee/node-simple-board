@@ -1,5 +1,21 @@
 const runQuery = require('../lib/database');
 
+const getList = async (start, count) => {
+    const sql = 'SELECT articles.*, users.displayName FROM articles ' +
+                'INNER JOIN users ON articles.author = users.id ' +
+                'WHERE articles.isActive = 1 AND articles.isDeleted = 0 ' + 
+                'ORDER BY articles.id DESC LIMIT ?, ?';
+    const articles = await runQuery(sql, [start, count]);
+    return articles;
+};
+
+const getTotalCount = async () => {
+    const sql = 'SELECT COUNT(id) AS articleCount FROM articles ' +
+                'WHERE isActive = 1 AND isDeleted = 0';
+    const { count } = (await runQuery(sql))[0];
+    return count;
+};
+
 const getById = async id => {
     const sql = 'SELECT articles.*, users.displayName FROM articles ' + 
                 'INNER JOIN users ON articles.author=users.id ' +
@@ -19,21 +35,27 @@ const getByIdAndAuthor = async (id, author) => {
 
 const create = async (title, content, author) => {
     const sql = 'INSERT INTO articles (title, content, author) VALUES (?, ?, ?)'
-    const article = await runQuery(sql, [title, content, author.id]);
-    return article.insertId;
+    const result = await runQuery(sql, [title, content, author.id]);
+    return result.insertId;
 };
 
-const update = async (id, title, content) => {
-    sql = 'UPDATE articles SET title=?, content=? WHERE id=?';
-    await runQuery(sql, [title, content, id]);
+const update = async (id, title, content, author) => {
+    const sql = 'UPDATE articles SET title=?, content=? ' +
+                'WHERE id=? AND author=? AND isActive=1 AND isDeleted=0';
+    const result = await runQuery(sql, [title, content, id, author.id]);
+    if (!result.changedRows) throw new Error('NOT_FOUND');
 };
 
-const remove = async id => {
-    sql = 'UPDATE articles SET isDeleted=1 WHERE id=?';
-    await runQuery(sql, [id]);
+const remove = async (id, author) => {
+    const sql = 'UPDATE articles SET isDeleted=1 ' +
+                'WHERE id=? AND author=? AND isActive=1 AND isDeleted=0';
+    const result = await runQuery(sql, [id, author.id]);
+    if (!result.changedRows) throw new Error('NOT_FOUND');
 };
 
 module.exports = {
+    getList,
+    getTotalCount,
     getById,
     getByIdAndAuthor,
     create,

@@ -1,4 +1,3 @@
-const { runQuery } = require('../../lib/database');
 const { articleDAO } = require('../../DAOs');
 
 // GET /article/:articleId(\\d+)
@@ -63,9 +62,8 @@ const editArticle = async (req, res, next) => {
 		const trimmedContent = content.trim();
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 
-		const article = await articleDAO.getByIdAndAuthor(articleId, user.id);
-		await articleDAO.update(trimmedTitle, trimmedContent, article.id);
-		res.redirect(`/article/${article.id}`);
+		await articleDAO.update(articleId, trimmedTitle, trimmedContent, user);
+		res.redirect(`/article/${articleId}`);
 	} catch (err) {
 		next(err);
 	}
@@ -77,9 +75,7 @@ const deleteArticle = async (req, res, next) => {
 		const { user } = req.session;
 		const { articleId } = req.params;
 
-		await articleDAO.getByIdAndAuthor(articleId, user);
-		await articleDAO.remove(articleId);
-		
+		await articleDAO.remove(articleId, user);
 		res.redirect('/articles/page/1');
 	} catch (err) {
 		next(err);
