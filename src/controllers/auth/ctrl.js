@@ -5,8 +5,8 @@ const { generatePassword, verifyPassword } = require('../../lib/authentication')
 const signInForm = async (req, res, next) => {
     try {
         const { user } = req.session;
-        if (user) res.redirect('/');
-        else res.render('auth/sign-in.pug', { user });
+        if (user) return res.redirect('/');
+        else return res.render('auth/sign-in.pug', { user });
     } catch (err) {
         next(err);
     }
@@ -31,7 +31,7 @@ const signIn = async (req, res, next) => {
         };
         return res.redirect('/');
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -39,9 +39,9 @@ const signIn = async (req, res, next) => {
 const signUpForm = async (req, res, next) => {
     try {
         const { user } = req.session;
-        res.render('auth/sign-up.pug', { user });
+        return res.render('auth/sign-up.pug', { user });
     } catch {
-        next(err);
+        return next(err);
     }
 };
 
@@ -53,9 +53,9 @@ const signUp = async (req, res, next) => {
 
         const hashedPassword = await generatePassword(password);
         await userDAO.create(username, hashedPassword, displayName);
-        res.redirect('/auth/sign_in');
+        return res.redirect('/auth/sign_in');
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -65,9 +65,9 @@ const signOut = async (req, res, next) => {
         req.session.destroy(err => {
             if (err) throw err;
         });
-        res.redirect('/');
+        return res.redirect('/');
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 

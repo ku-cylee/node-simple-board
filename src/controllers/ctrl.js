@@ -4,9 +4,9 @@ const { articleDAO } = require('../DAOs');
 const indexPage = async (req, res, next) => {
     try {
         const { user } = req.session;
-        res.render('index.pug', { user });
+        return res.render('index.pug', { user });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -25,7 +25,7 @@ const listArticles = async (req, res, next) => {
         const articleCount = await articleDAO.getTotalCount();
         const pageCount = Math.ceil(articleCount / ARTICLES_PER_PAGE);
 
-        res.render('articles/index.pug', {
+        return res.render('articles/index.pug', {
             user,
             articles,
             page: pageNum, 
@@ -33,16 +33,16 @@ const listArticles = async (req, res, next) => {
             hasNext: pageNum < pageCount,
         });
     } catch (err) {
-        next(err)
+        return next(err)
     }
 };
 
 // GET /articles
 const latestArticles = async (req, res, next) => {
     try {
-        res.redirect('/articles/page/1');
+        return res.redirect('/articles/page/1');
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
