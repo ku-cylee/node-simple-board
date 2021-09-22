@@ -1,4 +1,4 @@
-const runQuery = require('../lib/database');
+const { runQuery } = require('../lib/database');
 
 const formatDate = date => {
     const yr = date.getFullYear();

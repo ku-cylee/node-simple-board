@@ -1,4 +1,4 @@
-const runQuery = require('../lib/database');
+const { runQuery } = require('../lib/database');
 
 const getByUsername = async username => {
     const sql = 'SELECT * FROM users WHERE username = ?';

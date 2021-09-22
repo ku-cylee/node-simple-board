@@ -18,13 +18,13 @@ const runQuery = async (query, data) => {
 			const [result] = await conn.query(sql);
 			conn.release();
 			return result;
-		} catch (e) {
+		} catch (err) {
 			conn.release();
-			throw e;
+			throw err;
 		}
-	} catch (e) {
-		throw (e);
+	} catch (err) {
+		throw err;
 	}
 };
 
-module.exports = runQuery;
+module.exports = { runQuery };
