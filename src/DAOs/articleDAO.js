@@ -17,33 +17,39 @@ const replaceDate = article => {
 };
 
 const getList = async (start, count) => {
-    const sql = 'SELECT articles.*, users.displayName FROM articles ' +
-                'INNER JOIN users ON articles.author = users.id ' +
-                'WHERE articles.isActive = 1 AND articles.isDeleted = 0 ' +
-                'ORDER BY articles.id DESC LIMIT ?, ?';
+    const sql = 'SELECT a.id, a.title, a.content, a.created_at AS createdAt,' +
+                'a.last_updated AS lastUpdated, a.author, a.is_active AS isActive, ' +
+                'a.is_deleted AS isDeleted, u.display_name AS displayName '  +
+                'FROM articles AS a INNER JOIN users AS u ' +
+                'ON a.author = u.id AND a.is_active = 1 AND a.is_deleted = 0 ' +
+                'ORDER BY a.id DESC LIMIT ?, ?';
     const articles = await runQuery(sql, [start, count]);
     return articles.map(replaceDate);
 };
 
 const getTotalCount = async () => {
-    const sql = 'SELECT COUNT(id) AS articleCount FROM articles ' +
-                'WHERE isActive = 1 AND isDeleted = 0';
+    const sql = 'SELECT Count(*) AS articleCount FROM articles ' +
+                'WHERE is_active = 1 AND is_deleted = 0';
     const { count } = (await runQuery(sql))[0];
     return count;
 };
 
 const getById = async id => {
-    const sql = 'SELECT articles.*, users.displayName FROM articles ' +
-                'INNER JOIN users ON articles.author=users.id ' +
-                'WHERE articles.id=? AND articles.isActive=1 AND articles.isDeleted=0';
+    const sql = 'SELECT a.id, a.title, a.content, a.created_at AS createdAt, ' +
+                'a.last_updated AS lastUpdated, a.author, a.is_active AS isActive, ' +
+                'a.is_deleted AS isDeleted, u.display_name AS displayName '  +
+                'FROM articles AS a INNER JOIN users AS u ' +
+                'ON a.id = ? AND a.author = u.id AND a.is_active = 1 AND a.is_deleted = 0';
     const articles = await runQuery(sql, [id]);
     if (!articles.length) throw new Error('NOT_FOUND');
     return replaceDate(articles[0]);
 };
 
 const getByIdAndAuthor = async (id, author) => {
-    const sql = 'SELECT * FROM articles ' +
-                'WHERE id=? AND author=? AND isActive=1 AND isDeleted=0';
+    const sql = 'SELECT id, title, content, author, created_at AS createdAt, ' +
+                'last_updated AS lastUpdated, is_active AS isActive, ' +
+                'is_deleted AS isDeleted FROM articles ' +
+                'WHERE id = ? AND author = ? AND is_active = 1 AND is_deleted = 0';
     const articles = await runQuery(sql, [id, author.id]);
     if (!articles.length) throw new Error('NOT_FOUND');
     return replaceDate(articles[0]);
@@ -56,15 +62,15 @@ const create = async (title, content, author) => {
 };
 
 const update = async (id, title, content, author) => {
-    const sql = 'UPDATE articles SET title=?, content=? ' +
-                'WHERE id=? AND author=? AND isActive=1 AND isDeleted=0';
+    const sql = 'UPDATE articles SET title = ?, content = ? ' +
+                'WHERE id = ? AND author = ? AND is_active = 1 AND is_deleted = 0';
     const result = await runQuery(sql, [title, content, id, author.id]);
     if (!result.changedRows) throw new Error('NOT_FOUND');
 };
 
 const remove = async (id, author) => {
-    const sql = 'UPDATE articles SET isDeleted=1 ' +
-                'WHERE id=? AND author=? AND isActive=1 AND isDeleted=0';
+    const sql = 'UPDATE articles SET is_deleted = 1 ' +
+                'WHERE id = ? AND author= ? AND is_active = 1 AND is_deleted = 0';
     const result = await runQuery(sql, [id, author.id]);
     if (!result.changedRows) throw new Error('NOT_FOUND');
 };

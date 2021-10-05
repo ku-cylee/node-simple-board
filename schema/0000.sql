@@ -3,11 +3,11 @@
 CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(16) NOT NULL UNIQUE,
-    `displayName` VARCHAR(32) NOT NULL UNIQUE,
+    `display_name` VARCHAR(32) NOT NULL UNIQUE,
     `password` VARCHAR(256) NOT NULL,
-    `dateJoined` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-    `isActive` TINYINT(1) NOT NULL DEFAULT 1,
-    `isStaff` TINYINT(1) NOT NULL DEFAULT 0,
+    `date_joined` DATETIME NOT NULL DEFAULT current_timestamp(),
+    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+    `is_staff` TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -16,10 +16,10 @@ CREATE TABLE `articles` (
     `title` VARCHAR(32) NOT NULL,
     `content` TEXT NOT NULL,
     `author` INT NOT NULL,
-    `createdAt` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-    `lastUpdated` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-    `isActive` TINYINT(1) NOT NULL DEFAULT 1,
-    `isDeleted` TINYINT(1) NOT NULL DEFAULT 0,
+    `created_at` DATETIME NOT NULL DEFAULT current_timestamp(),
+    `last_updated` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+    `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`author`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
