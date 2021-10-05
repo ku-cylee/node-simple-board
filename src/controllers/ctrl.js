@@ -28,8 +28,8 @@ const listArticles = async (req, res, next) => {
         return res.render('articles/index.pug', {
             user,
             articles,
-            page: pageNum, 
-            hasPrev: pageNum > 1, 
+            page: pageNum,
+            hasPrev: pageNum > 1,
             hasNext: pageNum < pageCount,
         });
     } catch (err) {

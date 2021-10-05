@@ -19,7 +19,7 @@ const replaceDate = article => {
 const getList = async (start, count) => {
     const sql = 'SELECT articles.*, users.displayName FROM articles ' +
                 'INNER JOIN users ON articles.author = users.id ' +
-                'WHERE articles.isActive = 1 AND articles.isDeleted = 0 ' + 
+                'WHERE articles.isActive = 1 AND articles.isDeleted = 0 ' +
                 'ORDER BY articles.id DESC LIMIT ?, ?';
     const articles = await runQuery(sql, [start, count]);
     return articles.map(replaceDate);
@@ -33,7 +33,7 @@ const getTotalCount = async () => {
 };
 
 const getById = async id => {
-    const sql = 'SELECT articles.*, users.displayName FROM articles ' + 
+    const sql = 'SELECT articles.*, users.displayName FROM articles ' +
                 'INNER JOIN users ON articles.author=users.id ' +
                 'WHERE articles.id=? AND articles.isActive=1 AND articles.isDeleted=0';
     const articles = await runQuery(sql, [id]);

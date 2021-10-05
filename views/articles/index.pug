@@ -18,7 +18,7 @@ block content
             each article in articles
                 .list-group-item
                     a.card-title.card-link(href=`/article/${article.id}`) #{article.title}
-                    .card-text 
+                    .card-text
                         | ##{article.id}
                         | /
                         | Written by #{article.displayName}
