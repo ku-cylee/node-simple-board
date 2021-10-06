@@ -1,5 +1,3 @@
 ClassicEditor
     .create(document.querySelector('#editor'))
-    .catch(error => {
-        console.error( error );
-    });
+    .catch(err => console.error(err));

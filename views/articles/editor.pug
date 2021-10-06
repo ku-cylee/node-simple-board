@@ -20,9 +20,9 @@ block scripts
 
 block page_title
     if article
-        | Editing Article #{article.title}
+        | Editing: #{article.title}
     else
-        | Writing Article as #{user.username}
+        | Writing as @#{user.username}
 
 block buttons
     a.btn.btn-secondary.mr-2(href='/articles') Go to Board

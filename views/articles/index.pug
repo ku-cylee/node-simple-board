@@ -17,7 +17,8 @@ block content
         .list-group.list-group-flush
             each article in articles
                 .list-group-item
-                    a.card-title.card-link(href=`/article/${article.id}`) #{article.title}
+                    a.card-title.card-link(href=`/article/${article.id}`)
+                        | #{article.title}
                     .card-text
                         | ##{article.id}
                         | /

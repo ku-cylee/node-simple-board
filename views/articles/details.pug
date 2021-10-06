@@ -15,6 +15,9 @@ block buttons
         a.btn.btn-warning.mr-2(href=`/article/edit/${article.id}`) Edit Article
         a.btn.btn-danger.mr-2(href=`/article/delete/${article.id}`) Delete Article
 
+block page_title
+    | #{article.title}
+
 block content
     .card#content
         .card-header
