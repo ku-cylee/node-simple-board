@@ -1,4 +1,4 @@
-const { userDAO } = require('../../DAOs');
+const { UserDAO } = require('../../DAO');
 const { generatePassword, verifyPassword } = require('../../lib/authentication');
 
 // GET /auth/sign_in
@@ -18,7 +18,7 @@ const signIn = async (req, res, next) => {
         const { username, password } = req.body;
         if (!username || !password) throw new Error('BAD_REQUEST');
 
-        const user = await userDAO.getByUsername(username);
+        const user = await UserDAO.getByUsername(username);
         const isVerified = await verifyPassword(password, user.password);
         if (!isVerified) throw new Error('UNAUTHORIZED');
 
@@ -52,7 +52,7 @@ const signUp = async (req, res, next) => {
         if (!displayName || !username || !password) throw new Error('BAD_REQUEST');
 
         const hashedPassword = await generatePassword(password);
-        await userDAO.create(username, hashedPassword, displayName);
+        await UserDAO.create(username, hashedPassword, displayName);
         return res.redirect('/auth/sign_in');
     } catch (err) {
         return next(err);

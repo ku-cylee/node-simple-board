@@ -1,4 +1,4 @@
-const { articleDAO } = require('../DAOs');
+const { ArticleDAO } = require('../DAO');
 
 // GET /
 const indexPage = async (req, res, next) => {
@@ -21,8 +21,8 @@ const listArticles = async (req, res, next) => {
         const ARTICLES_PER_PAGE = 10;
         const startIndex = (pageNum - 1) * ARTICLES_PER_PAGE;
 
-        const articles = await articleDAO.getList(startIndex, ARTICLES_PER_PAGE);
-        const articleCount = await articleDAO.getTotalCount();
+        const articles = await ArticleDAO.getList(startIndex, ARTICLES_PER_PAGE);
+        const articleCount = await ArticleDAO.getTotalCount();
         const pageCount = Math.ceil(articleCount / ARTICLES_PER_PAGE);
 
         return res.render('articles/index.pug', {

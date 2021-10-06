@@ -1,11 +1,11 @@
-const { articleDAO } = require('../../DAOs');
+const { ArticleDAO } = require('../../DAO');
 
 // GET /article/:articleId(\\d+)
 const readArticle = async (req, res, next) => {
     try {
 		const { user } = req.session;
 		const { articleId } = req.params;
-		const article = await articleDAO.getById(parseInt(articleId, 10));
+		const article = await ArticleDAO.getById(parseInt(articleId, 10));
         return res.render('articles/details.pug', { user, article });
     } catch (err) {
         return next(err);
@@ -31,7 +31,7 @@ const writeArticle = async (req, res, next) => {
 		const trimmedContent = content.trim();
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 		
-		const newArticleId = await articleDAO.create(trimmedTitle, trimmedContent, user);
+		const newArticleId = await ArticleDAO.create(trimmedTitle, trimmedContent, user);
 		return res.redirect(`/article/${newArticleId}`);
 	} catch (err) {
 		return next(err);
@@ -44,7 +44,7 @@ const editArticleForm = async (req, res, next) => {
 		const { user } = req.session;
 		const { articleId } = req.params;
 		const articleIdNum = parseInt(articleId, 10);
-		const article = await articleDAO.getByIdAndAuthor(articleIdNum, user);
+		const article = await ArticleDAO.getByIdAndAuthor(articleIdNum, user);
 
 		return res.render('articles/editor.pug', { user, article });
 	} catch (err) {
@@ -62,7 +62,7 @@ const editArticle = async (req, res, next) => {
 		const trimmedContent = content.trim();
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 
-		await articleDAO.update(articleId, trimmedTitle, trimmedContent, user);
+		await ArticleDAO.update(articleId, trimmedTitle, trimmedContent, user);
 		return res.redirect(`/article/${articleId}`);
 	} catch (err) {
 		return next(err);
@@ -75,7 +75,7 @@ const deleteArticle = async (req, res, next) => {
 		const { user } = req.session;
 		const { articleId } = req.params;
 
-		await articleDAO.remove(articleId, user);
+		await ArticleDAO.remove(articleId, user);
 		return res.redirect('/articles/page/1');
 	} catch (err) {
 		return next(err);
