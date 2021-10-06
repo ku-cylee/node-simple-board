@@ -33,7 +33,7 @@ const listArticles = async (req, res, next) => {
             hasNext: pageNum < pageCount,
         });
     } catch (err) {
-        return next(err)
+        return next(err);
     }
 };
 
