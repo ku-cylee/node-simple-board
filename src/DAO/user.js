@@ -5,7 +5,6 @@ const getByUsername = async username => {
                 'date_joined as dateJoined, is_active AS isActive, ' +
                 'is_staff as isStaff FROM users WHERE username = ?';
     const result = await runQuery(sql, [username]);
-    if (!result.length) throw new Error('UNAUTHORIZED');
     return result[0];
 };
 

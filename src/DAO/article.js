@@ -11,8 +11,10 @@ const formatDate = date => {
 };
 
 const replaceDate = article => {
-    article.createdAt = formatDate(article.createdAt);
-    article.lastUpdated = formatDate(article.lastUpdated);
+    if (article) {
+        article.createdAt = formatDate(article.createdAt);
+        article.lastUpdated = formatDate(article.lastUpdated);
+    }
     return article;
 };
 
@@ -41,7 +43,6 @@ const getById = async id => {
                 'FROM articles AS a INNER JOIN users AS u ' +
                 'ON a.id = ? AND a.author = u.id AND a.is_active = 1 AND a.is_deleted = 0';
     const articles = await runQuery(sql, [id]);
-    if (!articles.length) throw new Error('NOT_FOUND');
     return replaceDate(articles[0]);
 };
 
@@ -51,7 +52,6 @@ const getByIdAndAuthor = async (id, author) => {
                 'is_deleted AS isDeleted FROM articles ' +
                 'WHERE id = ? AND author = ? AND is_active = 1 AND is_deleted = 0';
     const articles = await runQuery(sql, [id, author.id]);
-    if (!articles.length) throw new Error('NOT_FOUND');
     return replaceDate(articles[0]);
 };
 
@@ -61,18 +61,14 @@ const create = async (title, content, author) => {
     return result.insertId;
 };
 
-const update = async (id, title, content, author) => {
-    const sql = 'UPDATE articles SET title = ?, content = ? ' +
-                'WHERE id = ? AND author = ? AND is_active = 1 AND is_deleted = 0';
-    const result = await runQuery(sql, [title, content, id, author.id]);
-    if (!result.changedRows) throw new Error('NOT_FOUND');
+const update = async (id, title, content) => {
+    const sql = 'UPDATE articles SET title = ?, content = ? WHERE id = ?';
+    await runQuery(sql, [title, content, id]);
 };
 
-const remove = async (id, author) => {
-    const sql = 'UPDATE articles SET is_deleted = 1 ' +
-                'WHERE id = ? AND author= ? AND is_active = 1 AND is_deleted = 0';
-    const result = await runQuery(sql, [id, author.id]);
-    if (!result.changedRows) throw new Error('NOT_FOUND');
+const remove = async (id) => {
+    const sql = 'UPDATE articles SET is_deleted = 1 WHERE id = ?';
+    await runQuery(sql, [id]);
 };
 
 module.exports = {

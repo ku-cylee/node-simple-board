@@ -19,8 +19,9 @@ const signIn = async (req, res, next) => {
         if (!username || !password) throw new Error('BAD_REQUEST');
 
         const user = await UserDAO.getByUsername(username);
-        const isVerified = await verifyPassword(password, user.password);
-        if (!isVerified) throw new Error('UNAUTHORIZED');
+        if (!user) throw new Error('UNAUTHORIZED');
+        const isValid = await verifyPassword(password, user.password);
+        if (!isValid) throw new Error('UNAUTHORIZED');
 
         req.session.user = {
             id: user.id,
@@ -64,8 +65,8 @@ const signOut = async (req, res, next) => {
     try {
         req.session.destroy(err => {
             if (err) throw err;
+            else return res.redirect('/');
         });
-        return res.redirect('/');
     } catch (err) {
         return next(err);
     }

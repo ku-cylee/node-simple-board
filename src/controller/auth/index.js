@@ -1,15 +1,15 @@
 const { Router } = require('express');
 
-const authCtrl = require('./ctrl');
+const ctrl = require('./ctrl');
 
 const router = Router();
 
-router.get('/sign_in', authCtrl.signInForm);
-router.post('/sign_in', authCtrl.signIn);
+router.get('/sign_in', ctrl.signInForm);
+router.post('/sign_in', ctrl.signIn);
 
-router.get('/sign_up', authCtrl.signUpForm);
-router.post('/sign_up', authCtrl.signUp);
+router.get('/sign_up', ctrl.signUpForm);
+router.post('/sign_up', ctrl.signUp);
 
-router.get('/sign_out', authCtrl.signOut);
+router.get('/sign_out', ctrl.signOut);
 
 module.exports = router;

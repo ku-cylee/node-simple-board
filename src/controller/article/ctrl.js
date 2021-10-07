@@ -5,7 +5,8 @@ const readArticle = async (req, res, next) => {
     try {
 		const { user } = req.session;
 		const { articleId } = req.params;
-		const article = await ArticleDAO.getById(parseInt(articleId, 10));
+		const article = await ArticleDAO.getById(articleId);
+		if (!article) throw new Error('NOT_FOUND');
         return res.render('articles/details.pug', { user, article });
     } catch (err) {
         return next(err);
@@ -43,8 +44,8 @@ const editArticleForm = async (req, res, next) => {
 	try {
 		const { user } = req.session;
 		const { articleId } = req.params;
-		const articleIdNum = parseInt(articleId, 10);
-		const article = await ArticleDAO.getByIdAndAuthor(articleIdNum, user);
+		const article = await ArticleDAO.getByIdAndAuthor(articleId, user);
+		if (!article) throw new Error('NOT_FOUND');
 
 		return res.render('articles/editor.pug', { user, article });
 	} catch (err) {
@@ -58,11 +59,15 @@ const editArticle = async (req, res, next) => {
 		const { user } = req.session;
 		const { articleId } = req.params;
 		const { title, content } = req.body;
+
+		const article = await ArticleDAO.getByIdAndAuthor(articleId, user);
+		if (!article) throw new Error('NOT_FOUND');
+
 		const trimmedTitle = title.trim();
 		const trimmedContent = content.trim();
 		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
 
-		await ArticleDAO.update(articleId, trimmedTitle, trimmedContent, user);
+		await ArticleDAO.update(articleId, trimmedTitle, trimmedContent);
 		return res.redirect(`/article/${articleId}`);
 	} catch (err) {
 		return next(err);
@@ -74,6 +79,9 @@ const deleteArticle = async (req, res, next) => {
 	try {
 		const { user } = req.session;
 		const { articleId } = req.params;
+
+		const article = await ArticleDAO.getByIdAndAuthor(articleId, user);
+		if (!article) throw new Error('NOT_FOUND');
 
 		await ArticleDAO.remove(articleId, user);
 		return res.redirect('/articles/page/1');
