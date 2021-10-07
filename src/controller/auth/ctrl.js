@@ -23,13 +23,8 @@ const signIn = async (req, res, next) => {
         const isValid = await verifyPassword(password, user.password);
         if (!isValid) throw new Error('UNAUTHORIZED');
 
-        req.session.user = {
-            id: user.id,
-            username: user.username,
-            displayName: user.displayName,
-            isActive: user.isActive,
-            isStaff: user.isStaff,
-        };
+        const { id, displayName, isActive, isStaff } = user;
+        req.session.user = { id, username, displayName, isActive, isStaff };
         return res.redirect('/');
     } catch (err) {
         return next(err);
@@ -50,7 +45,14 @@ const signUpForm = async (req, res, next) => {
 const signUp = async (req, res, next) => {
     try {
         const { username, password, displayName } = req.body;
-        if (!username || !password || !displayName) throw new Error('BAD_REQUEST');
+        if (
+            !username ||
+            username.length > 16 ||
+            !password ||
+            !displayName ||
+            displayName.length > 32
+        )
+            throw new Error('BAD_REQUEST');
 
         const hashedPassword = await generatePassword(password);
         await UserDAO.create(username, hashedPassword, displayName);

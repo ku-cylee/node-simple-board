@@ -31,7 +31,8 @@ const writeArticle = async (req, res, next) => {
 		const { user } = req.session;
 		const title = req.body.title.trim();
 		const content = req.body.content.trim();
-		if (!title || !content) throw new Error('BAD_REQUEST');
+		if (!title || title.length > 50 || !content || content.length > 65535)
+			throw new Error('BAD_REQUEST');
 		
 		const newArticleId = await ArticleDAO.create(title, content, user);
 		return res.redirect(`/article/${newArticleId}`);
@@ -66,7 +67,8 @@ const editArticle = async (req, res, next) => {
 
 		const title = req.body.title.trim();
 		const content = req.body.content.trim();
-		if (!title || !content) throw new Error('BAD_REQUEST');
+		if (!title || title.length > 50 || !content || content.length > 65535)
+			throw new Error('BAD_REQUEST');
 
 		await ArticleDAO.update(articleId, title, content);
 		return res.redirect(`/article/${articleId}`);
