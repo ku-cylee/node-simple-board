@@ -2,7 +2,7 @@ const express = require('express');
 const logger = require('morgan');
 const session = require('express-session');
 
-const controller = require('./controllers');
+const controller = require('./controller');
 const { errorHandler } = require('./lib/error-handler');
 
 const app = express();
