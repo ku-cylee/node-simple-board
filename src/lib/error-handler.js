@@ -7,10 +7,16 @@ const errorHandler = (err, req, res, next) => {
         case 'UNAUTHORIZED':
             return res.send(getAlertScript('Login failure!'));
         case 'NOT_FOUND':
-            return res.sendStatus(404);
+            return res.render('error.pug', {
+                errorCode: 404,
+                errorMsg: 'Not Found',
+            });
         default:
             if (process.env.MODE !== 'prod') console.error('\x1b[31m%s\x1b[0m', err);
-            return res.sendStatus(500);
+            return res.render('error.pug', {
+                errorCode: 500,
+                errorMsg: 'Internal Server Error',
+            });
     }
 };
 
