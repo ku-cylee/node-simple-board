@@ -40,8 +40,8 @@ const getById = async id => {
     const sql = 'SELECT a.id, a.title, a.content, a.created_at AS createdAt, ' +
                 'a.last_updated AS lastUpdated, a.author, a.is_active AS isActive, ' +
                 'a.is_deleted AS isDeleted, u.display_name AS displayName '  +
-                'FROM articles AS a INNER JOIN users AS u ' +
-                'ON a.id = ? AND a.author = u.id AND a.is_active = 1 AND a.is_deleted = 0';
+                'FROM articles AS a INNER JOIN users AS u ON a.author = u.id AND ' +
+                'a.id = ? AND a.is_active = 1 AND a.is_deleted = 0';
     const articles = await runQuery(sql, [id]);
     return replaceDate(articles[0]);
 };

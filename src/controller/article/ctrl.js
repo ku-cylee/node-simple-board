@@ -5,8 +5,10 @@ const readArticle = async (req, res, next) => {
     try {
 		const { user } = req.session;
 		const { articleId } = req.params;
+
 		const article = await ArticleDAO.getById(articleId);
 		if (!article) throw new Error('NOT_FOUND');
+
         return res.render('articles/details.pug', { user, article });
     } catch (err) {
         return next(err);
@@ -27,12 +29,11 @@ const writeArticleForm = async (req, res, next) => {
 const writeArticle = async (req, res, next) => {
 	try {
 		const { user } = req.session;
-		const { title, content } = req.body;
-		const trimmedTitle = title.trim();
-		const trimmedContent = content.trim();
-		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
+		const title = req.body.title.trim();
+		const content = req.body.content.trim();
+		if (!title || !content) throw new Error('BAD_REQUEST');
 		
-		const newArticleId = await ArticleDAO.create(trimmedTitle, trimmedContent, user);
+		const newArticleId = await ArticleDAO.create(title, content, user);
 		return res.redirect(`/article/${newArticleId}`);
 	} catch (err) {
 		return next(err);
@@ -44,6 +45,7 @@ const editArticleForm = async (req, res, next) => {
 	try {
 		const { user } = req.session;
 		const { articleId } = req.params;
+
 		const article = await ArticleDAO.getByIdAndAuthor(articleId, user);
 		if (!article) throw new Error('NOT_FOUND');
 
@@ -58,16 +60,15 @@ const editArticle = async (req, res, next) => {
 	try {
 		const { user } = req.session;
 		const { articleId } = req.params;
-		const { title, content } = req.body;
 
 		const article = await ArticleDAO.getByIdAndAuthor(articleId, user);
 		if (!article) throw new Error('NOT_FOUND');
 
-		const trimmedTitle = title.trim();
-		const trimmedContent = content.trim();
-		if (!trimmedTitle || !trimmedContent) throw new Error('BAD_REQUEST');
+		const title = req.body.title.trim();
+		const content = req.body.content.trim();
+		if (!title || !content) throw new Error('BAD_REQUEST');
 
-		await ArticleDAO.update(articleId, trimmedTitle, trimmedContent);
+		await ArticleDAO.update(articleId, title, content);
 		return res.redirect(`/article/${articleId}`);
 	} catch (err) {
 		return next(err);

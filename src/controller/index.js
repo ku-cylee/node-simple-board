@@ -1,14 +1,14 @@
 const { Router } = require('express');
 
-const indexCtrl = require('./ctrl');
+const ctrl = require('./ctrl');
 const article = require('./article');
 const auth = require('./auth');
 
 const router = Router();
 
-router.get('/', indexCtrl.indexPage);
-router.get('/articles/page/:page(\\d+)', indexCtrl.listArticles);
-router.get('/articles', indexCtrl.latestArticles);
+router.get('/', ctrl.indexPage);
+router.get('/articles/page/:page(\\d+)', ctrl.listArticles);
+router.get('/articles', ctrl.latestArticles);
 
 router.use('/article', article);
 router.use('/auth', auth);

@@ -49,11 +49,12 @@ const signUpForm = async (req, res, next) => {
 // POST /auth/sign_up
 const signUp = async (req, res, next) => {
     try {
-        const { displayName, username, password } = req.body;
-        if (!displayName || !username || !password) throw new Error('BAD_REQUEST');
+        const { username, password, displayName } = req.body;
+        if (!username || !password || !displayName) throw new Error('BAD_REQUEST');
 
         const hashedPassword = await generatePassword(password);
         await UserDAO.create(username, hashedPassword, displayName);
+
         return res.redirect('/auth/sign_in');
     } catch (err) {
         return next(err);

@@ -1,9 +1,9 @@
 const { runQuery } = require('../lib/database');
 
 const getByUsername = async username => {
-    const sql = 'SELECT id, username, display_name AS displayName, password, ' +
-                'date_joined as dateJoined, is_active AS isActive, ' +
-                'is_staff as isStaff FROM users WHERE username = ?';
+    const sql = 'SELECT id, username, display_name AS displayName, ' +
+                'password, is_active AS isActive, is_staff as isStaff FROM users ' + 
+                'WHERE username = ?';
     const result = await runQuery(sql, [username]);
     return result[0];
 };

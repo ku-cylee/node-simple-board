@@ -11,19 +11,13 @@ const pool = mysql.createPool({
 });
 
 const runQuery = async (pstmt, data) => {
+	const conn = await pool.getConnection();
 	try {
-		const conn = await pool.getConnection();
-		try {
-			const sql = conn.format(pstmt, data);
-			const [result] = await conn.query(sql);
-			conn.release();
-			return result;
-		} catch (err) {
-			conn.release();
-			throw err;
-		}
-	} catch (err) {
-		throw err;
+		const sql = conn.format(pstmt, data);
+		const [result] = await conn.query(sql);
+		return result;
+	} finally {
+		conn.release();
 	}
 };
 
