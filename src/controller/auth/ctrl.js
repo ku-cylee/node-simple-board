@@ -8,7 +8,7 @@ const signInForm = async (req, res, next) => {
         if (user) return res.redirect('/');
         else return res.render('auth/sign-in.pug', { user });
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 

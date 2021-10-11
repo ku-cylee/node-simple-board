@@ -13,4 +13,7 @@ const create = async (username, password, displayName) => {
     await runQuery(sql, [username, password, displayName]);
 };
 
-module.exports = { getByUsername, create };
+module.exports = {
+    getByUsername,
+    create,
+};

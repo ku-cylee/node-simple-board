@@ -55,8 +55,8 @@ const getByIdAndAuthor = async (id, author) => {
 
 const create = async (title, content, author) => {
     const sql = 'INSERT INTO articles (title, content, author) VALUES (?, ?, ?)'
-    const result = await runQuery(sql, [title, content, author.id]);
-    return result.insertId;
+    const { insertId } = await runQuery(sql, [title, content, author.id]);
+    return insertId;
 };
 
 const update = async (id, title, content) => {
